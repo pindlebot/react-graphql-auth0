@@ -1,19 +1,23 @@
 import React from 'react'
-import LoginAuth0 from './LoginAuth0'
 import Auth0Lock from 'auth0-lock'
 import { graphql, gql } from 'react-apollo'
 import { withRouter } from 'react-router-dom'
-import ListPage from './ListPage'
-import NewPostLink from './NewPostLink'
-import config from '../../config'
+import LoginAuth0 from '../../components/LoginAuth0'
+import ListPage from '../../components/ListPage'
+import NewPostLink from '../../components/NewPostLink'
+import config from '../../../config'
 import PropTypes from 'prop-types'
 import './style.css'
-import Header from './Header'
+import Header from '../../components/Header'
+import { connect } from 'react-redux';
+import {tokenIdReducer} from '../../reducer'
 
 class App extends React.Component {
 
   constructor(props) {
     super(props)
+
+    console.log(this.props)
 
     this.isLoggedIn = this.isLoggedIn.bind(this)
     this.createUser = this.createUser.bind(this)
@@ -39,17 +43,20 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.lock.on('authenticated', (authResult) => {
+    this.lock.on('authenticated', (authResult) => { 
       window.localStorage.setItem('auth0IdToken', authResult.idToken)
-      this.lock.getUserInfo(authResult.accessToken, (err, profile) => {
-        this.setState({profile})
-      })
+      this.props.tokenIdReducer(authResult.idToken)
     })
+    //window.localStorage.setItem('auth0IdToken', authResult.idToken)
+    //this.lock.getUserInfo(authResult.accessToken, (err, profile) => {
+    //  this.setState({profile})
+    //})
   }
 
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.data !== this.props.data) {
+      console.log(this.props.app)
       var data = nextProps.data
       if(!data.user && this.state.profile) {
          var idToken = window.localStorage.getItem('auth0IdToken')
@@ -72,6 +79,7 @@ class App extends React.Component {
             lock={this.lock}
           />
           <div className='w-100 flex flex-row'>
+            <p>{this.props.idToken}</p>
             <div className='w-20 flex flex-column items-center pa3'>
               <NewPostLink />
             </div>
@@ -114,6 +122,25 @@ App.propTypes = {
   data: React.PropTypes.object.isRequired
 }
 
-export default graphql(createUser, {name: 'createUser'})(
-  graphql(userQuery, { options: {fetchPolicy: 'network-only'}})(withRouter(App))
-)
+const options = { options: {fetchPolicy: 'network-only'} }
+
+const Wrapper = graphql(createUser, { name: 'createUser' })(graphql(userQuery, options)(withRouter(App)))
+
+function mapStateToProps(state) {
+  return {
+    app: state.app
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    tokenIdReducer: (idToken) => dispatch(tokenIdReducer(idToken))
+  }
+}
+
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+)(withRouter(Wrapper))
+
+
