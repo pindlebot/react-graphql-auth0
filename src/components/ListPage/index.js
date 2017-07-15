@@ -1,5 +1,5 @@
-import { graphql, gql } from 'react-apollo'
-import ListPage from './ListPage'
+import { graphql, gql } from 'react-apollo';
+import ListPage from './ListPage';
 
 const FeedQuery = gql`query FeedQuery {
   allPosts(orderBy: createdAt_DESC) {
@@ -7,6 +7,6 @@ const FeedQuery = gql`query FeedQuery {
     title
     description
   }
-}`
+}`;
 
-export default graphql(FeedQuery, { options: {fetchPolicy: 'network-only'}})(ListPage)
+export default graphql(FeedQuery, { options: { fetchPolicy: 'network-only' } })(ListPage);

@@ -1,39 +1,40 @@
-import Auth0Lock from 'auth0-lock'
-const config = require('./config')
-const createClient = require('./client')
+import Auth0Lock from 'auth0-lock';
 
-const SET_TOKEN_ID = 'SET_TOKEN_ID'
-const UPDATE_PROFILE = 'UPDATE_PROFILE'
-const UPDATE_CLIENT = 'UPDATE_CLIENT'
-const SAVE_ACCESS_TOKEN = 'SAVE_ACCESS_TOKEN'
+const config = require('./config');
+const createClient = require('./client');
+
+const SET_TOKEN_ID = 'SET_TOKEN_ID';
+const UPDATE_PROFILE = 'UPDATE_PROFILE';
+const UPDATE_CLIENT = 'UPDATE_CLIENT';
+const SAVE_ACCESS_TOKEN = 'SAVE_ACCESS_TOKEN';
 
 function tokenIdReducer(idToken) {
   return {
     type: SET_TOKEN_ID,
-    idToken
-  }
+    idToken,
+  };
 }
 
 function updateProfile(profile) {
   return {
     type: UPDATE_PROFILE,
-    profile
-  }
+    profile,
+  };
 }
 
 function updateClient() {
-  var client = createClient()
+  const client = createClient();
   return {
     type: UPDATE_CLIENT,
-    client
-  }
+    client,
+  };
 }
 
-function saveAccessToken (accessToken) {
+function saveAccessToken(accessToken) {
   return {
     type: SAVE_ACCESS_TOKEN,
-    accessToken
-  }
+    accessToken,
+  };
 }
 
 const initialState = {
@@ -41,28 +42,28 @@ const initialState = {
   profile: null,
   accessToken: null,
   lock: new Auth0Lock(config.AUTH0_CLIENT_ID, config.AUTH0_DOMAIN),
-}
+};
 
 function appReducer(state = initialState, action) {
-  switch(action.type) {     
+  switch (action.type) {
     case SET_TOKEN_ID:
       return Object.assign({}, state, {
-        idToken: action.idToken
-      })
+        idToken: action.idToken,
+      });
     case UPDATE_PROFILE:
       return Object.assign({}, state, {
-        profile: action.profile
-      })
+        profile: action.profile,
+      });
     case UPDATE_CLIENT:
       return Object.assign({}, state, {
-        client: action.client
-      })
+        client: action.client,
+      });
     case SAVE_ACCESS_TOKEN:
       return Object.assign({}, state, {
-        accessToken: action.accessToken
-      })
-    default: 
-      return state
+        accessToken: action.accessToken,
+      });
+    default:
+      return state;
   }
 }
 
@@ -71,5 +72,5 @@ module.exports = {
   updateProfile,
   updateClient,
   saveAccessToken,
-  appReducer
-}
+  appReducer,
+};

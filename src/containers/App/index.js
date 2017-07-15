@@ -1,10 +1,9 @@
-import React from 'react'
-import { graphql, gql, compose, withApollo } from 'react-apollo'
-import { withRouter } from 'react-router-dom'
+import { graphql, gql, compose, withApollo } from 'react-apollo';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import {tokenIdReducer, saveAccessToken} from '../../reducer'
+import { saveAccessToken, updateProfiles } from '../../reducer';
 
-import App from './App'
+import App from './App';
 
 const userQuery = gql`
   query userQuery {
@@ -14,7 +13,7 @@ const userQuery = gql`
       emailAddress
     }
   }
-`
+`;
 
 const createUser = gql`
   mutation createUser(
@@ -32,7 +31,7 @@ const createUser = gql`
       id
     }
   }
-`
+`;
 
 const updateUser = gql`
   mutation updateUser($name: String!, $id: ID!) {
@@ -41,35 +40,34 @@ const updateUser = gql`
       name
     }
   }
-`
+`;
 
 const Wrapper = withApollo(compose(
   graphql(createUser, {
-    props: ({ownProps, mutate}) => ({
-      createUser: (variables) => mutate (variables)
-    })
+    props: ({ ownProps, mutate }) => ({
+      createUser: variables => mutate(variables),
+    }),
   }),
   graphql(updateUser, {
-    props: ({ownProps, mutate}) => ({
-      updateUser: ({name, id}) => mutate ({variables: {name, id}})
-    })
-  })
-)(graphql(userQuery, { options: {fetchPolicy: 'network-only'} })(App)))
+    props: ({ ownProps, mutate }) => ({
+      updateUser: ({ name, id }) => mutate({ variables: { name, id } }),
+    }),
+  }),
+)(graphql(userQuery, { options: { fetchPolicy: 'network-only' } })(App)));
 
-const mapStateToProps = (state) => ({ 
+const mapStateToProps = state => ({
   lock: state.app.lock,
   profile: state.app.profile,
-  accessToken: state.app.accessToken
-})
+  accessToken: state.app.accessToken,
+});
 
-const mapDispatchToProps = (dispatch) => ({ 
-  updateProfile: (profile) => dispatch(updateProfile(profile)),
-  saveAccessToken: (accessToken) => dispatch(saveAccessToken(accessToken))
-})
+const mapDispatchToProps = dispatch => ({
+  updateProfile: profile => dispatch(updateProfile(profile)),
+  saveAccessToken: accessToken => dispatch(saveAccessToken(accessToken)),
+});
 
 export default connect(
-  mapStateToProps, 
-  mapDispatchToProps
-)(withRouter(Wrapper))
-
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(Wrapper));
 

@@ -1,4 +1,4 @@
-import { graphql, gql } from "react-apollo";
+import { graphql, gql } from 'react-apollo';
 
 const subscription = {
   document: gql`
@@ -16,10 +16,10 @@ const subscription = {
   updateQuery: (prevState, { subscriptionData }) => ({
     allPosts: [
       { ...subscriptionData.data.Post.node },
-      ...prevState.allPosts
+      ...prevState.allPosts,
     ],
-    onError: err => console.error(err)
-  })
-}
+    onError: err => console.error(err),
+  }),
+};
 
 export default subscription;

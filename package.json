@@ -11,6 +11,11 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^0.28.4",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.0.2",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.1.0",
     "react-hot-loader": "^3.0.0-beta.7",
     "style-loader": "^0.18.2",
     "webpack-dev-server": "^2.5.1"
@@ -35,9 +40,8 @@
     "start": "NODE_ENV=production node ./src/server",
     "dev": "NODE_ENV=development webpack-dev-server",
     "build": "NODE_ENV=production webpack -p --define process.env.NODE_ENV=production",
-    "prod": "npm run build && npm run start"
-  },
-  "eslintConfig": {
-    "extends": "./node_modules/react-scripts/config/eslint.js"
+    "prod": "npm run build && npm run start",
+    "lint": "eslint ./src",
+    "fix": "eslint ./src --fix"
   }
 }
