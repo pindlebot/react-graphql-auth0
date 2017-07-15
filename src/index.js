@@ -1,13 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './containers/App'
-import CreatePost from './components/CreatePost'
-import CreateUser from './components/CreateUser'
+import CreatePost from './containers/CreatePost'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { ApolloProvider, ApolloClient } from 'react-apollo'
 import 'tachyons'
-import Auth0Lock from 'auth0-lock'
-import config from '../config'
+import config from './config'
 import store from './store'
 import client from './client'
 
@@ -18,7 +16,7 @@ class Entry extends React.Component {
         <Router>
           <div>
             <Route exact path='/' component={App} />
-            <Route path='/create' component={CreatePost} />
+            {/*<Route path='/create' component={CreatePost} />*/}
           </div>
         </Router>
       </ApolloProvider>

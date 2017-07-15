@@ -1,6 +1,6 @@
 import React from 'react'
 import LoginAuth0 from './LoginAuth0'
-import config from '../../config'
+import config from '../config'
 import {logout} from '../auth'
 import Btn from './Btn'
 

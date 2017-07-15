@@ -1,9 +1,10 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 import Auth0Lock from 'auth0-lock'
 import { withRouter } from 'react-router-dom'
 import {getProfileData} from '../auth'
-import config from '../../config'
+import config from '../config'
 import { graphql, gql } from 'react-apollo'
+import PropTypes from 'prop-types'
 
 class LoginAuth0 extends Component {
 
