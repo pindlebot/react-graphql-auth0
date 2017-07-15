@@ -1,8 +1,8 @@
 import React from 'react'
-import { graphql, gql } from 'react-apollo'
+import { graphql, gql, compose, withApollo } from 'react-apollo'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
-import {tokenIdReducer} from '../../reducer'
+import {tokenIdReducer, saveAccessToken} from '../../reducer'
 
 import App from './App'
 
@@ -10,29 +10,62 @@ const userQuery = gql`
   query userQuery {
     user {
       id
+      name
+      emailAddress
     }
   }
 `
 
 const createUser = gql`
-  mutation ($idToken: String!, $name: String!, $emailAddress: String!, $emailSubscription: Boolean!){
-    createUser(authProvider: {auth0: {idToken: $idToken}}, name: $name, emailAddress: $emailAddress, emailSubscription: $emailSubscription) {
+  mutation createUser(
+    $idToken: String!, 
+    $name: String!, 
+    $emailAddress: String!, 
+    $emailSubscription: Boolean!
+  ){
+    createUser(
+      authProvider: {auth0: {idToken: $idToken}}, 
+      name: $name, 
+      emailAddress: $emailAddress, 
+      emailSubscription: $emailSubscription
+    ) {
       id
     }
   }
 `
 
-const options = { options: {fetchPolicy: 'network-only'} }
+const updateUser = gql`
+  mutation updateUser($name: String!, $id: ID!) {
+    updateUser(name: $name, id: $id) {
+      id,
+      name
+    }
+  }
+`
 
-const Wrapper = graphql(createUser, { name: 'createUser' })(graphql(userQuery, options)(App))
+const Wrapper = withApollo(compose(
+  graphql(createUser, {
+    props: ({ownProps, mutate}) => ({
+      createUser: (variables) => mutate (variables)
+    })
+  }),
+  graphql(updateUser, {
+    props: ({ownProps, mutate}) => ({
+      updateUser: ({name, id}) => mutate ({variables: {name, id}})
+    })
+  })
+)(graphql(userQuery, { options: {fetchPolicy: 'network-only'} })(App)))
 
-const mapStateToProps = (state) => (
-  { app: state.app }
-)
+const mapStateToProps = (state) => ({ 
+  lock: state.app.lock,
+  profile: state.app.profile,
+  accessToken: state.app.accessToken
+})
 
-const mapDispatchToProps = (dispatch) => (
-    { tokenIdReducer: (idToken) => dispatch(tokenIdReducer(idToken)) }
-)
+const mapDispatchToProps = (dispatch) => ({ 
+  updateProfile: (profile) => dispatch(updateProfile(profile)),
+  saveAccessToken: (accessToken) => dispatch(saveAccessToken(accessToken))
+})
 
 export default connect(
   mapStateToProps, 

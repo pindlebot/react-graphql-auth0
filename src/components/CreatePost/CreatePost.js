@@ -1,8 +1,9 @@
 import React from 'react'
 import { withRouter, Redirect } from 'react-router-dom'
 import { graphql, gql } from 'react-apollo'
-import Btn from '../../components/Btn'
-import Input from '../../components/Input'
+import Btn from '../Btn'
+import Input from '../Input'
+import PropTypes from 'prop-types'
 
 export default class CreatePost extends React.Component {
   constructor(props) {
@@ -65,6 +66,6 @@ export default class CreatePost extends React.Component {
 }
 
 CreatePost.propTypes = {
-  createPost: React.PropTypes.func,
-  data: React.PropTypes.object,
+  createPost: PropTypes.func,
+  data: PropTypes.object
 }

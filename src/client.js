@@ -3,7 +3,7 @@ import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-trans
 import config from './config'
 
 // __SUBSCRIPTIONS_API_ENDPOINT_ looks similar to: `wss://subscriptions.graph.cool/v1/<PROJECT_ID>`
-const wsClient = new SubscriptionClient('wss://subscriptions.graph.cool/v1/cj53mfs7jxshk0175ae6tjev0')
+const wsClient = new SubscriptionClient(config.GRAPH_COOL_SUBSCRIPTION_ENDPOINT)
 
 // __SIMPLE_API_ENDPOINT_ looks similar to: `https://api.graph.cool/simple/v1/<PROJECT_ID>`
 const networkInterface = createNetworkInterface({ 
@@ -29,9 +29,9 @@ const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
   wsClient
 )
 
-var client = new ApolloClient({
-  networkInterface: networkInterfaceWithSubscriptions,
-  dataIdFromObject: o => o.id
-})
-
-module.exports = client
+module.exports = () => (
+  new ApolloClient({
+    networkInterface: networkInterfaceWithSubscriptions,
+    dataIdFromObject: o => o.id
+  })
+)

@@ -6,7 +6,7 @@ export default class NewPostLink extends React.Component {
   render() {
     return (
       <Btn>
-        <Link to='/create' className='no-underline white'>
+        <Link to='/' className='no-underline white'>
           New Post
         </Link>
       </Btn>

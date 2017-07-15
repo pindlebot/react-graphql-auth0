@@ -1,7 +1,7 @@
 import React from 'react'
 import Post from '../Post'
 import subscription from './subscription'
-import CreatePost from '../../containers/CreatePost'
+import CreatePost from '../CreatePost'
 import PropTypes from 'prop-types'
 import { graphql, gql } from 'react-apollo'
 
@@ -44,7 +44,7 @@ class ListPage extends React.Component {
 }
 
 ListPage.propTypes = {
-  data: React.PropTypes.object,
+  data: PropTypes.object,
 }
 
 export default ListPage

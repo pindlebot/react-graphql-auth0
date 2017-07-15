@@ -1,5 +1,4 @@
 import React from 'react'
-import Auth0Lock from 'auth0-lock'
 import { graphql, gql } from 'react-apollo'
 import { withRouter } from 'react-router-dom'
 import LoginAuth0 from '../../components/LoginAuth0'
@@ -9,50 +8,65 @@ import config from '../../config'
 import PropTypes from 'prop-types'
 import './style.css'
 import Header from '../../components/Header'
-import { connect } from 'react-redux';
-import {tokenIdReducer} from '../../reducer'
+import subscription from './subscription'
+import Input from '../../components/Input'
+import Btn from '../../components/Btn'
 
 export default class App extends React.Component {
 
   constructor(props) {
     super(props)
 
-    console.log(this.props)
-
     this.createUser = this.createUser.bind(this)
-    this.lock = new Auth0Lock(config.AUTH0_CLIENT_ID, config.AUTH0_DOMAIN)
 
-    this.state = { profile: null }
+    this.state = {
+      name: ''
+    }
   }
 
-  async createUser(profile, idToken) {
+  async createUser(profile) {
     const variables = {
-      idToken: idToken,
+      idToken: window.localStorage.getItem('auth0IdToken'),
       emailAddress: profile.email,
       name: profile.name,
       emailSubscription: true
     }
 
     var resp = await this.props.createUser({ variables })  
-    this.props.history.push(`/`)
+    this.props.client.resetStore()
   }
 
   componentDidMount() {
-    this.lock.on('authenticated', (authResult) => { 
+    this.props.lock.on('authenticated', (authResult) => { 
       window.localStorage.setItem('auth0IdToken', authResult.idToken)
-      this.lock.getUserInfo(authResult.accessToken, (err, profile) => {
-        this.setState({profile})
-      })
+      this.props.client.resetStore();
+      this.props.saveAccessToken(authResult.accessToken)
     })
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.data !== this.props.data) {
-      var data = nextProps.data
-      if(!data.user && this.state.profile) {
-         var idToken = window.localStorage.getItem('auth0IdToken')
-         this.createUser(this.state.profile, idToken)
+    console.log(nextProps)
+    if (!nextProps.data.loading) {
+      if(nextProps.accessToken && !nextProps.data.user) {
+        this.props.lock.getUserInfo(nextProps.accessToken, (err, profile) => {
+          console.log(profile)
+          this.createUser(profile)
+        })
+      } 
+
+      if(nextProps.data.user) {
+        this.setState({name: nextProps.data.user.name})
       }
+
+      if (this.subscription) {
+        if (nextProps.data.user !== this.props.data.user) {
+          this.subscription()
+        } else {
+          return
+        }
+      } 
+      
+      this.subscription = nextProps.data.subscribeToMore(subscription) 
     }
   }
 
@@ -67,14 +81,32 @@ export default class App extends React.Component {
           <Header 
             data={this.props.data} 
             history={this.props.history}
-            lock={this.lock}
+            lock={this.props.lock}
           />
           <div className='w-100 flex flex-row'>
-            <p>{this.props.idToken}</p>
             <div className='w-20 flex flex-column items-center pa3'>
-              <NewPostLink />
+            
+              <div className="ma1">
+                <Input 
+                placeholder="Title"
+                value={this.state.name} 
+                onChange={e => this.setState({name: e.target.value})}
+                />
+
+                <Btn><span 
+                  onClick={() => { 
+                    this.props.updateUser({
+                      name: this.state.name, 
+                      id: this.props.data.user.id
+                    }) 
+                  }}>
+                    Update
+                  </span>
+                </Btn>
+              </div>
             </div>
             <div className='w-80 flex flex-column'>
+              <p>{JSON.stringify(this.props.data.user ? this.props.data.user : {})}</p>
               <ListPage />
             </div>
           </div>
@@ -85,7 +117,7 @@ export default class App extends React.Component {
         <Header 
           data={this.props.data} 
           history={this.props.history}
-          lock={this.lock}
+          lock={this.props.lock}
         />
       )
     }
@@ -93,6 +125,6 @@ export default class App extends React.Component {
 }
 
 App.propTypes = {
-  history: React.PropTypes.object.isRequired,
-  data: React.PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired
 }
