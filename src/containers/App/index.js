@@ -42,19 +42,6 @@ const updateUser = gql`
   }
 `;
 
-const Wrapper = withApollo(compose(
-  graphql(createUser, {
-    props: ({ ownProps, mutate }) => ({
-      createUser: variables => mutate(variables),
-    }),
-  }),
-  graphql(updateUser, {
-    props: ({ ownProps, mutate }) => ({
-      updateUser: ({ name, id }) => mutate({ variables: { name, id } }),
-    }),
-  }),
-)(graphql(userQuery, { options: { fetchPolicy: 'network-only' } })(App)));
-
 const mapStateToProps = state => ({
   lock: state.app.lock,
   profile: state.app.profile,
@@ -66,8 +53,22 @@ const mapDispatchToProps = dispatch => ({
   saveAccessToken: accessToken => dispatch(saveAccessToken(accessToken)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(Wrapper));
-
+export default withApollo(compose(
+  graphql(createUser, {
+    props: ({ ownProps, mutate }) => ({
+      createUser: variables => mutate(variables),
+    }),
+  }),
+  graphql(updateUser, {
+    props: ({ ownProps, mutate }) => ({
+      updateUser: ({ name, id }) => mutate({ variables: { name, id } }),
+    }),
+  }),
+  graphql(userQuery, { 
+    options: { fetchPolicy: 'network-only' } 
+  }),
+  connect(
+    mapStateToProps, 
+    mapDispatchToProps
+  ),
+)(withRouter(App)));
