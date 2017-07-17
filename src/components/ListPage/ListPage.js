@@ -7,6 +7,12 @@ import CreatePost from '../CreatePost';
 
 class ListPage extends React.Component {
 
+  constructor(props) {
+    super(props)
+
+    this.deletePost = this.deletePost.bind(this)
+  }
+
   componentWillReceiveProps(nextProps) {
     if (!nextProps.data.loading) {
       if (this.subscription) {
@@ -22,16 +28,28 @@ class ListPage extends React.Component {
     }
   }
 
+  deletePost(id) {
+    console.log(id)
+    this.props.deletePost(id).then(resp => {
+      this.props.client.resetStore();
+    })
+  }
+
   render() {
     if (this.props.data.loading) {
       return (<div>Loading</div>);
     }
+    console.log(this.props)
 
     return (
       <div>
         <div>
           {this.props.data.allPosts.map(post =>
-            <Post key={post.id} post={post} />,
+            <Post 
+              key={post.id} 
+              post={post} 
+              handleClick={this.deletePost}
+            />,
           )}
         </div>
         <CreatePost />

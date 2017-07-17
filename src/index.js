@@ -1,21 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './containers/App';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { ApolloProvider, ApolloClient } from 'react-apollo';
 import 'tachyons';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import store from './store';
-import { connect } from 'react-redux';
-
 import createClient from './client';
+import Entry from './Entry'
 
+injectTapEventPlugin();
 const client = createClient();
 
 ReactDOM.render((
   <ApolloProvider store={store} client={client}>
-    <Router>
-      <Route exact path="/" component={App} />
-    </Router>
+    <Entry />
   </ApolloProvider>
   ),
   document.getElementById('root'),

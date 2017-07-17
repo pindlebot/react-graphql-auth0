@@ -11,7 +11,7 @@ class LoginAuth0 extends Component {
       <div>
         <span
           onClick={() => { this.props.lock.show(); }}
-          className="br2 ba b--mid-gray dib pa2 mid-gray dim pointer"
+          className="br2 ba b--mid-gray dib pa2 black dim pointer"
         >Log in with Auth0
         </span>
       </div>

@@ -5,7 +5,6 @@ const createClient = require('./client');
 
 const SET_TOKEN_ID = 'SET_TOKEN_ID';
 const UPDATE_PROFILE = 'UPDATE_PROFILE';
-const UPDATE_CLIENT = 'UPDATE_CLIENT';
 const SAVE_ACCESS_TOKEN = 'SAVE_ACCESS_TOKEN';
 
 function tokenIdReducer(idToken) {
@@ -19,14 +18,6 @@ function updateProfile(profile) {
   return {
     type: UPDATE_PROFILE,
     profile,
-  };
-}
-
-function updateClient() {
-  const client = createClient();
-  return {
-    type: UPDATE_CLIENT,
-    client,
   };
 }
 
@@ -54,10 +45,6 @@ function appReducer(state = initialState, action) {
       return Object.assign({}, state, {
         profile: action.profile,
       });
-    case UPDATE_CLIENT:
-      return Object.assign({}, state, {
-        client: action.client,
-      });
     case SAVE_ACCESS_TOKEN:
       return Object.assign({}, state, {
         accessToken: action.accessToken,
@@ -70,7 +57,6 @@ function appReducer(state = initialState, action) {
 module.exports = {
   tokenIdReducer,
   updateProfile,
-  updateClient,
   saveAccessToken,
   appReducer,
 };

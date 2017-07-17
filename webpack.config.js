@@ -37,7 +37,7 @@ var devPlugins = [
 var prodOutput = {
   filename: '[name].[chunkhash].js',
   chunkFilename: '[name].[chunkhash].chunk.js',
-  path: path.resolve(__dirname, "dist"), // string
+  path: path.resolve(__dirname, "dist"),
   publicPath: "/", 
   sourceMapFilename: '[file].map',
 }
@@ -66,10 +66,7 @@ module.exports = {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['es2015']
-          }
+          loader: 'babel-loader'
         }
       }, {
         test: /\.css$/,

@@ -1,5 +1,13 @@
-import { graphql, gql } from 'react-apollo';
+import { graphql, gql, compose } from 'react-apollo';
 import ListPage from './ListPage';
+
+const deletePost = gql`
+  mutation deletePost($id: ID!) {
+    deletePost(id: $id) {
+      id
+    }
+  }
+`
 
 const FeedQuery = gql`query FeedQuery {
   allPosts(orderBy: createdAt_DESC) {
@@ -9,4 +17,14 @@ const FeedQuery = gql`query FeedQuery {
   }
 }`;
 
-export default graphql(FeedQuery, { options: { fetchPolicy: 'network-only' } })(ListPage);
+
+export default compose(
+  graphql(deletePost, {
+    props: ({ownProps, mutate}) => ({
+      deletePost: ({id}) => mutate({ variables: { id } })
+    }),
+  }),
+  graphql(FeedQuery, {
+    options: { fetchPolicy: 'network-only' } 
+  })
+)(ListPage)
