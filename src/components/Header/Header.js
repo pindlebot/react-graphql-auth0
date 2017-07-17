@@ -1,12 +1,12 @@
 import React from 'react';
-import AppBar from './AppBar'
+import NavBar from './NavBar';
 
 const Header = props => (
   <div>
-    <AppBar 
+    <NavBar
       {...props}
     />
   </div>
-)
+);
 
 export default Header;

@@ -1,14 +1,17 @@
 import React from 'react';
-import { withRouter, Redirect } from 'react-router-dom';
-import { graphql, gql } from 'react-apollo';
-import Btn from '../Btn';
-import Input from '../Input';
-import PropTypes from 'prop-types';
-import TextField from 'material-ui/TextField'
-import Paper from 'material-ui/Paper'
-import FlatButton from 'material-ui/FlatButton'
+import { Redirect } from 'react-router-dom';
+import propTypes from 'prop-types';
+import TextField from 'material-ui/TextField';
+import Paper from 'material-ui/Paper';
+import FlatButton from 'material-ui/FlatButton';
 
 export default class CreatePost extends React.Component {
+
+  static propTypes = {
+    createPost: propTypes.func.isRequired,
+    data: propTypes.object.isRequired,
+  }
+
   constructor(props) {
     super(props);
 
@@ -46,23 +49,23 @@ export default class CreatePost extends React.Component {
       <div className="w-100 pa4 flex justify-center">
         <Paper zDepth={1} style={{ maxWidth: 400 }} className="pa3">
           <TextField
-            fullWidth={true}
+            fullWidth
             id="title"
             placeholder="Title"
-            value={this.state.title}
+            value={title}
             onChange={e => this.setState({ title: e.target.value })}
           />
           <TextField
-            fullWidth={true}
+            fullWidth
             id="description"
             placeholder="Description"
-            value={this.state.description}
+            value={description}
             onChange={e => this.setState({ description: e.target.value })}
           />
           {this.state.description && this.state.title &&
             <FlatButton
               label="Post"
-              onTouchTap={this.handlePost} 
+              onTouchTap={this.handlePost}
             />
           }
         </Paper>
@@ -70,8 +73,3 @@ export default class CreatePost extends React.Component {
     );
   }
 }
-
-CreatePost.propTypes = {
-  createPost: PropTypes.func,
-  data: PropTypes.object,
-};

@@ -1,9 +1,17 @@
-import React from 'react'
-import Header from '../../components/Header'
+import React, {PureComponent} from 'react';
+import propTypes from 'prop-types'
+import Header from '../../components/Header';
 
-class Layout extends React.Component {
+class Layout extends PureComponent {
+
+  static propTypes = {
+    data: propTypes.object.isRequired,
+    history: propTypes.object.isRequired,
+    lock: propTypes.object.isRequired,
+  }
+
   render() {
-    return(
+    return (
       <div>
         <Header
           data={this.props.data}
@@ -11,11 +19,11 @@ class Layout extends React.Component {
           lock={this.props.lock}
         />
         <div className="content">
-        {this.props.children}
+          {this.props.children}
         </div>
-        <div className="footer"></div>
+        <div className="footer" />
       </div>
-    )
+    );
   }
 }
-export default Layout
+export default Layout;

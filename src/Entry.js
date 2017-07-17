@@ -1,73 +1,76 @@
 import React from 'react';
-import PropTypes from 'prop-types'
-import App from './containers/App';
+import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { withApollo, compose, graphql, gql } from 'react-apollo';
 import { connect } from 'react-redux';
-import Profile from './containers/Profile'
-
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
-import theme from './theme'
-
-import {APP_PATH, PROFILE_PATH} from './constants'
-
-import {saveAccessToken, updateProfile} from './reducer'
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import App from './containers/App';
+import Profile from './containers/Profile';
+import theme from './theme';
+import { APP_PATH, PROFILE_PATH } from './constants';
+import { saveAccessToken, updateProfile } from './reducer';
 
 class Entry extends React.Component {
   static childContextTypes = {
-    muiTheme: PropTypes.object
+    muiTheme: PropTypes.object,
+  };
+
+  static propTypes = {
+    lock: PropTypes.object.isRequired,
+    data: PropTypes.object.isRequired,
+    saveAccessToken: PropTypes.func.isRequired,
+    createUser: PropTypes.func.isRequired,
+    client: PropTypes.object.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.getUserInfo = this.getUserInfo.bind(this);
   }
 
   getChildContext = () => ({
-    muiTheme: getMuiTheme(theme)
-  })
-
-  constructor(props) {
-    super(props)
-
-    this.getUserInfo = this.getUserInfo.bind(this)
-  }
+    muiTheme: getMuiTheme(theme),
+  });
 
   componentDidMount() {
-    console.log(this.props)
     this.props.lock.on('authenticated', (authResult) => {
       window.localStorage.setItem('auth0IdToken', authResult.idToken);
       this.props.client.resetStore().then(() => {
         this.props.saveAccessToken(authResult.accessToken);
-      })
+      });
     });
   }
 
-  async getUserInfo(accessToken) {
-    return new Promise ((resolve ,reject) => { 
-      this.props.lock.getUserInfo(accessToken, (err, profile) => {
-        resolve(profile)
-      })
-    })
-  }
-
-  async componentWillReceiveProps(nextProps) {  
+  async componentWillReceiveProps(nextProps) {
     if (nextProps.accessToken && !nextProps.data.user) {
-      var profile = await getUserInfo(accessToken)
-      console.log(profile);
+      const profile = await this.getUserInfo(nextProps.accessToken);
       this.props.createUser({ variables: {
         idToken: window.localStorage.getItem('auth0IdToken'),
         emailAddress: profile.email,
         name: profile.name,
         emailSubscription: true,
-      }});
+      } });
     }
   }
 
+  getUserInfo(accessToken) {
+    return new Promise((resolve) => {
+      this.props.lock.getUserInfo(accessToken, (err, profile) => {
+        resolve(profile);
+      });
+    });
+  }
+
   render() {
-    return(
-    <Router>
-      <div>
-        <Route exact path={APP_PATH} component={App} />
-        <Route path={PROFILE_PATH} component={Profile} />
-      </div>
-    </Router>
-    )
+    return (
+      <Router>
+        <div>
+          <Route exact path={APP_PATH} component={App} />
+          <Route path={PROFILE_PATH} component={Profile} />
+        </div>
+      </Router>
+    );
   }
 }
 
@@ -116,8 +119,8 @@ export default withApollo(compose(
       createUser: variables => mutate(variables),
     }),
   }),
-  graphql(userQuery, { 
-    options: { fetchPolicy: 'network-only' } 
+  graphql(userQuery, {
+    options: { fetchPolicy: 'network-only' },
   }),
   connect(mapStateToProps, mapDispatchToProps),
-)(Entry))
+)(Entry));

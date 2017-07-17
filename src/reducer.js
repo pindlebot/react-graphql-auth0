@@ -1,7 +1,5 @@
 import Auth0Lock from 'auth0-lock';
-
-const config = require('./config');
-const createClient = require('./client');
+import config from './config';
 
 const SET_TOKEN_ID = 'SET_TOKEN_ID';
 const UPDATE_PROFILE = 'UPDATE_PROFILE';

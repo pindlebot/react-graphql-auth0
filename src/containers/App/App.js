@@ -1,14 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 import ListPage from '../../components/ListPage';
 import './style.css';
-import Header from '../../components/Header';
 import subscription from './subscription';
-import Input from '../../components/Input';
-import Btn from '../../components/Btn';
-import Layout from '../Layout'
+import Layout from '../Layout';
 
 export default class App extends React.Component {
+  static propTypes = {
+    history: propTypes.object.isRequired,
+    data: propTypes.object.isRequired,
+  }
 
   constructor(props) {
     super(props);
@@ -16,20 +17,20 @@ export default class App extends React.Component {
     this.state = {
       formData: {
         name: '',
-        emailAddress: ''
-      }
+        emailAddress: '',
+      },
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.data.loading) {
       if (nextProps.data.user) {
-        var formData = {
-          name: nextProps.data.user.name, 
-          emailAddress: nextProps.data.user.emailAddress 
-        }
-        this.setState({ 
-          formData
+        const formData = {
+          name: nextProps.data.user.name,
+          emailAddress: nextProps.data.user.emailAddress,
+        };
+        this.setState({
+          formData,
         });
       }
 
@@ -60,14 +61,8 @@ export default class App extends React.Component {
       );
     }
     return (
-      <Layout {...this.props}></Layout>
+      <Layout {...this.props} />
     );
   }
 }
-
-App.propTypes = {
-  history: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
-  updateUser: PropTypes.func,
-};
 

@@ -7,7 +7,7 @@ const deletePost = gql`
       id
     }
   }
-`
+`;
 
 const FeedQuery = gql`query FeedQuery {
   allPosts(orderBy: createdAt_DESC) {
@@ -17,14 +17,50 @@ const FeedQuery = gql`query FeedQuery {
   }
 }`;
 
+const POSTS_SUBSCRIPTION = gql`
+  subscription {
+    Post(filter: { mutation_in: [CREATED] }) {
+      node {
+        id
+        title
+        description
+      }
+    }
+  }
+`
+
+const subscribeToPosts = (props) => {
+  return props.data.subscribeToMore({
+    document: POSTS_SUBSCRIPTION,
+    variables: null,
+    updateQuery: (prev, {
+      subscriptionData
+    }) => {
+      if (!subscriptionData.data) {
+        return prev;
+      }
+      return {
+        allPosts: [{...subscriptionData.data.Post.node
+          },
+          ...prev.allPosts
+        ]
+      }
+    },
+  })
+}
 
 export default compose(
   graphql(deletePost, {
-    props: ({ownProps, mutate}) => ({
-      deletePost: ({id}) => mutate({ variables: { id } })
+    props: ({ ownProps, mutate }) => ({
+      deletePost: ({ id }) => mutate({ variables: { id } }),
     }),
   }),
   graphql(FeedQuery, {
-    options: { fetchPolicy: 'network-only' } 
-  })
-)(ListPage)
+    props: props => ({
+      subscribeToPosts: subscribeToPosts(props)
+    }),
+  }),
+  graphql(FeedQuery, {
+    options: { fetchPolicy: 'network-only' },
+  }),
+)(ListPage);

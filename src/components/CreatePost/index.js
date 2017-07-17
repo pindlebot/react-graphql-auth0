@@ -1,5 +1,4 @@
 import { graphql, gql, compose } from 'react-apollo';
-import { withRouter } from 'react-router-dom';
 import CreatePost from './CreatePost';
 
 const createPost = gql`
@@ -22,11 +21,11 @@ const userQuery = gql`
 
 export default compose(
   graphql(createPost, {
-    props: ({ ownProps, mutate }) => ({
+    props: ({ mutate }) => ({
       createPost: ({ description, title }) => mutate({ variables: { description, title } }),
     }),
   }),
   graphql(userQuery, {
-    options: { fetchPolicy: 'network-only' } 
+    options: { fetchPolicy: 'network-only' },
   }),
-)(CreatePost)
+)(CreatePost);

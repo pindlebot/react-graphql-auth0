@@ -1,6 +1,5 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import { ApolloClient, ApolloProvider } from 'react-apollo';
-import { appReducer, updateNetworkInterface } from './reducer';
+import { appReducer } from './reducer';
 import createClient from './client';
 
 const client = createClient();

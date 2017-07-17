@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ApolloProvider, ApolloClient } from 'react-apollo';
+import { ApolloProvider } from 'react-apollo';
 import 'tachyons';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import store from './store';
 import createClient from './client';
-import Entry from './Entry'
+import Entry from './Entry';
 
 injectTapEventPlugin();
 const client = createClient();
