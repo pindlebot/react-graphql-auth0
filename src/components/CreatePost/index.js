@@ -2,10 +2,11 @@ import { graphql, gql, compose } from 'react-apollo';
 import CreatePost from './CreatePost';
 
 const createPost = gql`
-  mutation($description: String!, $title: String!) {
-    createPost(description: $description, title: $title) {
-      description
-      title
+  mutation createPost($comment: String!, $userId: ID!) {
+    createPost(
+      comment: $comment
+      userId: $userId
+    ) {
       id
     }
   }
@@ -22,7 +23,7 @@ const userQuery = gql`
 export default compose(
   graphql(createPost, {
     props: ({ mutate }) => ({
-      createPost: ({ description, title }) => mutate({ variables: { description, title } }),
+      createPost: ({ comment, userId }) => mutate({ variables: { comment, userId } }),
     }),
   }),
   graphql(userQuery, {

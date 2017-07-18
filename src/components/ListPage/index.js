@@ -9,21 +9,30 @@ const deletePost = gql`
   }
 `;
 
-const FeedQuery = gql`query FeedQuery {
-  allPosts(orderBy: createdAt_DESC) {
-    id
-    title
-    description
+const postQuery = gql`
+  query postQuery {
+    allPosts(orderBy: createdAt_DESC) {
+      id
+      comment
+      createdAt
+      user {
+        name
+      }
+    }
   }
-}`;
+`;
 
 const POSTS_SUBSCRIPTION = gql`
   subscription {
     Post(filter: { mutation_in: [CREATED, DELETED] }) {
+      mutation
       node {
         id
-        title
-        description
+        comment
+        createdAt
+        user {
+          name
+        }
       }
       previousValues {
         id
@@ -33,27 +42,25 @@ const POSTS_SUBSCRIPTION = gql`
 `
 
 const subscribeToPosts = (props) => {
-  return props.allPosts.subscribeToMore({
+  return props.data.subscribeToMore({
     document: POSTS_SUBSCRIPTION,
     variables: null,
-    updateQuery: (prev, {
-      subscriptionData
-    }) => {
-      
-      if (!subscriptionData.data) {
-        return prev;
-      }
-      console.log(subscriptionData)
-      if(!subscriptionData.data.Post.node) {
-        var id = subscriptionData.data.Post.previousValues.id
-        var allPosts = prev.allPosts.filter(x => x.id !== id)
-        return {
-          allPosts: [...allPosts]
-        }
-      }
-      
-      if (prev.allPosts.map(post => post.id).indexOf(subscriptionData.data.Post.node.id) < 0) {
-        return { allPosts: [...prev.allPosts, { ...subscriptionData.data.Post.node }] }
+    updateQuery: (prev, {subscriptionData}) => { 
+      var post = subscriptionData.data.Post
+      switch(true) {
+        case !subscriptionData.data: 
+          return prev
+          
+        case !post.node: 
+          var {id} = post.previousValues
+          var filtered = prev.allPosts.filter(x => x.id !== id)
+          return { allPosts: [...filtered] }
+          
+        case !prev.allPosts.find(post => post.id === subscriptionData.data.Post.node.id):
+          return { allPosts: [...prev.allPosts, { ...post.node }] }
+          
+        default: 
+          return prev
       }
     },
   })
@@ -65,13 +72,12 @@ export default compose(
       deletePost: ({ id }) => mutate({ variables: { id } }),
     }),
   }),
-  graphql(FeedQuery, {
-    name: 'allPosts',
+  graphql(postQuery, {
     props: props => ({
       subscribeToPosts: subscribeToPosts(props)
     }),
   }),
-  graphql(FeedQuery, {
+  graphql(postQuery, {
     options: { fetchPolicy: 'network-only' },
   }),
 )(ListPage);

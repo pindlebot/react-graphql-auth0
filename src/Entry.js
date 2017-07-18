@@ -33,12 +33,11 @@ class Entry extends React.Component {
     muiTheme: getMuiTheme(theme),
   });
 
-  componentWillMount() {
-    this.props.subscribeToUser()
+  componentWillUnmount() {
+    //this.props.subscribeToUser()
   }
 
   componentDidMount() {
-    console.log(this.props)
     this.props.lock.on('authenticated', (authResult) => {
       window.localStorage.setItem('auth0IdToken', authResult.idToken);
       this.props.client.resetStore().then(() => {
@@ -48,15 +47,15 @@ class Entry extends React.Component {
   }
 
   async componentWillReceiveProps(nextProps) {
-  
     if (nextProps.accessToken && !nextProps.data.user) {
       const profile = await this.getUserInfo(nextProps.accessToken);
-      this.props.createUser({ variables: {
+      await this.props.createUser({ variables: {
         idToken: window.localStorage.getItem('auth0IdToken'),
         emailAddress: profile.email,
         name: profile.name,
         emailSubscription: true,
-      } });
+      } })
+      await this.props.client.resetStore()
     }
   }
 
@@ -124,15 +123,12 @@ const subscribeToUser = (props) => {
   return props.data.subscribeToMore({
     document: USER_SUBSCRIPTION,
     variables: null,
-    updateQuery: (prev, {
-      subscriptionData
-    }) => {
+    updateQuery: (prev, {subscriptionData}) => {
       if (!subscriptionData.data) {
         return prev;
       }
-      return { 
-        user: [{ ...subscriptionData.data.User.node }, ...prev.user]}
-    },
+      return { user: subscriptionData.data.User.node }
+    }
   })
 }
 
@@ -157,10 +153,13 @@ export default withApollo(compose(
   graphql(userQuery, {
     options: { fetchPolicy: 'network-only' },
   }),
-  graphql(userQuery, {
+  connect(mapStateToProps, mapDispatchToProps),
+)(Entry));
+
+/*
+graphql(userQuery, {
     props: props => ({
       subscribeToUser: subscribeToUser(props)
     }),
   }),
-  connect(mapStateToProps, mapDispatchToProps),
-)(Entry));
+*/

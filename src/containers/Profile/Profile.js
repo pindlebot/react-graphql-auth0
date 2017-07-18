@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
 import Layout from '../Layout';
+import Spinner from '../../components/Spinner'
 
 const UserForm = props => (
   <div className="ma1">
@@ -39,6 +40,14 @@ const UserForm = props => (
     />
   </div>
 );
+
+UserForm.PropTypes = {
+  name: propTypes.string.isRequired,
+  id: propTypes.string.isRequired,
+  emailAddress: propTypes.string.isRequired,
+  updateUser: propTypes.func.isRequired,
+  handleChange: propTypes.func.isRequired
+}
 
 class Profile extends React.Component {
   static propTypes = {
@@ -78,7 +87,7 @@ class Profile extends React.Component {
 
   render() {
     if (this.props.data.loading) {
-      return <div>Loading</div>;
+      return <Spinner />;
     }
     return (
       <Layout {...this.props}>

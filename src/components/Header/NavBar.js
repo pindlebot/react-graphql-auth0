@@ -20,9 +20,9 @@ export default class Navbar extends Component {
     // router: PropTypes.object.isRequired
   }
 
-  static propTypes = {
-    data: PropTypes.object.isRequired,
-    lock: PropTypes.object.isRequired,
+  static PropTypes = {
+    data: PropTypes.object,
+    lock: PropTypes.object,
     history: PropTypes.object.isRequired,
   }
 

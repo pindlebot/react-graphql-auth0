@@ -4,6 +4,8 @@ import propTypes from 'prop-types';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton'
+import keydown from 'react-keydown';
 
 export default class CreatePost extends React.Component {
 
@@ -16,21 +18,26 @@ export default class CreatePost extends React.Component {
     super(props);
 
     this.state = {
-      description: '',
-      title: '',
+      comment: ''
     };
 
     this.handlePost = this.handlePost.bind(this);
+    this.submitComment = this.submitComment.bind(this)
+  }
+
+  @keydown( 'enter' ) // or specify `which` code directly, in this case 13 
+  submitComment( event ) {
+    this.handlePost()
   }
 
   handlePost() {
-    const { description, title } = this.state;
-    this.props.createPost({ description, title });
+    const { comment } = this.state;
+    this.props.createPost({ comment, userId: this.props.data.user.id });
   }
 
   render() {
     const { data: { loading, user }, createPost } = this.props;
-    const { title, description } = this.state;
+    const { comment } = this.state;
     if (loading) {
       return (<div>Loading</div>);
     }
@@ -46,28 +53,25 @@ export default class CreatePost extends React.Component {
     }
 
     return (
-      <div className="w-100 pa4 flex justify-center">
-        <Paper zDepth={1} style={{ maxWidth: 400 }} className="pa3">
+      <div className="w-100">
+        <Paper zDepth={1} className="pa3 w-100 flex flex-row justify-between">
           <TextField
-            fullWidth
-            id="title"
-            placeholder="Title"
-            value={title}
-            onChange={e => this.setState({ title: e.target.value })}
+            //fullWidth
+            onKeyDown={ this.submitComment }
+            id="comment"
+            placeholder="comment"
+            value={comment}
+            onChange={e => this.setState({ comment: e.target.value })}
           />
-          <TextField
-            fullWidth
-            id="description"
-            placeholder="Description"
-            value={description}
-            onChange={e => this.setState({ description: e.target.value })}
+      
+        
+          <RaisedButton
+            style={{boxShadow: 'none'}}
+            label="Submit"
+            primary={true}
+            onTouchTap={this.handlePost}
           />
-          {this.state.description && this.state.title &&
-            <FlatButton
-              label="Post"
-              onTouchTap={this.handlePost}
-            />
-          }
+          
         </Paper>
       </div>
     );

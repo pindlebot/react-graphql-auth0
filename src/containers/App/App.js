@@ -11,10 +11,6 @@ export default class App extends React.Component {
     data: propTypes.object.isRequired,
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log("App.js", nextProps)
-  }
-
   render() {
     if (this.props.data.loading) {
       return (<div>Loading</div>);
@@ -24,7 +20,7 @@ export default class App extends React.Component {
       return (
         <Layout {...this.props}>
           <div className="w-80 flex flex-column center">
-            <ListPage client={this.props.client} />
+            <ListPage {...this.props} />
           </div>
         </Layout>
       );

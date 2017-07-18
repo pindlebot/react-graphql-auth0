@@ -7,7 +7,7 @@ class Layout extends PureComponent {
   static propTypes = {
     data: propTypes.object.isRequired,
     history: propTypes.object.isRequired,
-    lock: propTypes.object.isRequired,
+    lock: propTypes.object,
   }
 
   render() {

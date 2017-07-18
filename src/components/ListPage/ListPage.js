@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Post from '../Post';
 import CreatePost from '../CreatePost';
-
+import Paper from 'material-ui/Paper'
 
 class ListPage extends React.Component {
 
@@ -16,16 +16,15 @@ class ListPage extends React.Component {
     super(props);
 
     this.deletePost = this.deletePost.bind(this);
-  }
-
-  componentWillMount() {
-
+   
   }
   
   componentWillReceiveProps(newProps) {
+  
     if (!newProps.data.loading) {
       if (this.subscription) {
         if (newProps.data.allPosts !== this.props.data.allPosts) {
+          this.setState({allPosts: newProps.allPosts})
           // if the feed has changed, we need to unsubscribe before resubscribing
           this.subscription()
         } else {
@@ -38,28 +37,29 @@ class ListPage extends React.Component {
   }
 
   deletePost(id) {
+    
     this.props.deletePost(id).then((resp) => {
-      //this.props.client.resetStore();
+      
     });
   }
 
   render() {
-    if (this.props.data.loading) {
+    var {data: {loading, allPosts}} = this.props
+    if (loading) {
       return (<div>Loading</div>);
     }
-    console.log(this.props);
-
+  
     return (
       <div>
-        <div>
-          {this.props.data.allPosts.map(post =>
+        <Paper zDepth={1} className="pa3 mv3">
+          {allPosts && allPosts.length > 0 ? allPosts.map(post =>
             (<Post
               key={post.id}
               post={post}
               handleClick={this.deletePost}
             />),
-          )}
-        </div>
+          ) : ''}
+        </Paper>
         <CreatePost />
       </div>
     );
