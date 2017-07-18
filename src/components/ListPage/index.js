@@ -19,31 +19,41 @@ const FeedQuery = gql`query FeedQuery {
 
 const POSTS_SUBSCRIPTION = gql`
   subscription {
-    Post(filter: { mutation_in: [CREATED] }) {
+    Post(filter: { mutation_in: [CREATED, DELETED] }) {
       node {
         id
         title
         description
+      }
+      previousValues {
+        id
       }
     }
   }
 `
 
 const subscribeToPosts = (props) => {
-  return props.data.subscribeToMore({
+  return props.allPosts.subscribeToMore({
     document: POSTS_SUBSCRIPTION,
     variables: null,
     updateQuery: (prev, {
       subscriptionData
     }) => {
+      
       if (!subscriptionData.data) {
         return prev;
       }
-      return {
-        allPosts: [{...subscriptionData.data.Post.node
-          },
-          ...prev.allPosts
-        ]
+      console.log(subscriptionData)
+      if(!subscriptionData.data.Post.node) {
+        var id = subscriptionData.data.Post.previousValues.id
+        var allPosts = prev.allPosts.filter(x => x.id !== id)
+        return {
+          allPosts: [...allPosts]
+        }
+      }
+      
+      if (prev.allPosts.map(post => post.id).indexOf(subscriptionData.data.Post.node.id) < 0) {
+        return { allPosts: [...prev.allPosts, { ...subscriptionData.data.Post.node }] }
       }
     },
   })
@@ -56,6 +66,7 @@ export default compose(
     }),
   }),
   graphql(FeedQuery, {
+    name: 'allPosts',
     props: props => ({
       subscribeToPosts: subscribeToPosts(props)
     }),

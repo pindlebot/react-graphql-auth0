@@ -18,19 +18,28 @@ class ListPage extends React.Component {
     this.deletePost = this.deletePost.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.data.loading) {
-      if (nextProps.data.allPosts !== this.props.data.allPosts) {
-        this.props.subscribeToPosts()
-      } else {
-        return;
+  componentWillMount() {
+
+  }
+  
+  componentWillReceiveProps(newProps) {
+    if (!newProps.data.loading) {
+      if (this.subscription) {
+        if (newProps.data.allPosts !== this.props.data.allPosts) {
+          // if the feed has changed, we need to unsubscribe before resubscribing
+          this.subscription()
+        } else {
+          // we already have an active subscription with the right params
+          return
+        }
       }
+      this.subscription = newProps.subscribeToPosts
     }
   }
 
   deletePost(id) {
     this.props.deletePost(id).then((resp) => {
-      this.props.client.resetStore();
+      //this.props.client.resetStore();
     });
   }
 

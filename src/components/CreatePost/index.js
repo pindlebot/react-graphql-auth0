@@ -2,11 +2,11 @@ import { graphql, gql, compose } from 'react-apollo';
 import CreatePost from './CreatePost';
 
 const createPost = gql`
-  mutation createPost($description: String!, $title: String!) {
+  mutation($description: String!, $title: String!) {
     createPost(description: $description, title: $title) {
-      id
       description
       title
+      id
     }
   }
 `;

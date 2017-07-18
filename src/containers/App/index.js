@@ -1,7 +1,6 @@
 import { graphql, gql, compose, withApollo } from 'react-apollo';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import subscription from './subscription'
 
 import App from './App';
 

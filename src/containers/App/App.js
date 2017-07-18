@@ -2,7 +2,7 @@ import React from 'react';
 import propTypes from 'prop-types';
 import ListPage from '../../components/ListPage';
 import './style.css';
-import subscription from './subscription';
+//import subscription from './subscription';
 import Layout from '../Layout';
 
 export default class App extends React.Component {
@@ -11,39 +11,8 @@ export default class App extends React.Component {
     data: propTypes.object.isRequired,
   }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      formData: {
-        name: '',
-        emailAddress: '',
-      },
-    };
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.data.loading) {
-      if (nextProps.data.user) {
-        const formData = {
-          name: nextProps.data.user.name,
-          emailAddress: nextProps.data.user.emailAddress,
-        };
-        this.setState({
-          formData,
-        });
-      }
-
-      if (this.subscription) {
-        if (nextProps.data.user !== this.props.data.user) {
-          this.subscription();
-        } else {
-          return;
-        }
-      }
-
-      this.subscription = nextProps.data.subscribeToMore(subscription);
-    }
+    console.log("App.js", nextProps)
   }
 
   render() {
