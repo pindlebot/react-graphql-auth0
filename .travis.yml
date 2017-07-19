@@ -16,6 +16,7 @@ script:
 deploy:
   skip_cleanup: true
   provider: heroku
+  buildpack: nodejs
   api_key:
     secure: "$HEROKU_KEY"
   app: "$HEROKU_APP"
