@@ -1,5 +1,7 @@
 # Auth0 Example (with React & Apollo)
 
+- lorum
+
 * [Auth0](https://auth0.com/): Powerful authentication provider
 * [Apollo Client](https://github.com/apollographql/apollo-client): Fully-featured, production ready caching GraphQL client
 * [Graphcool](https://www.graph.cool): Flexible backend platform combining GraphQL + AWS Lambda
