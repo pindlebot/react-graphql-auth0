@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from 'react-apollo';
-import('tachyons/css/tachyons.css')
+import 'tachyons/css/tachyons.css'
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import store from './store';
 import createClient from './client';
