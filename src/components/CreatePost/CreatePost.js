@@ -6,7 +6,22 @@ import Paper from 'material-ui/Paper';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton'
 import keydown from 'react-keydown';
+//import RefreshIcon from 'material-ui/svg-icons/navigation/refresh'
+import RefreshIndicator from 'material-ui/RefreshIndicator';
 
+const RefreshIcon = ({status}) => (
+   <RefreshIndicator
+    size={30}
+    top={0}
+    left={0} 
+    loadingColor="#FF9800"
+    status={status ? 'loading' : 'ready'}
+    style={{
+      display: 'inline-block',
+      position: 'relative',
+    }}
+    />
+)
 export default class CreatePost extends React.Component {
 
   static propTypes = {
@@ -18,7 +33,8 @@ export default class CreatePost extends React.Component {
     super(props);
 
     this.state = {
-      comment: ''
+      comment: '',
+      loading: false
     };
 
     this.handlePost = this.handlePost.bind(this);
@@ -32,7 +48,12 @@ export default class CreatePost extends React.Component {
 
   handlePost() {
     const { comment } = this.state;
-    this.props.createPost({ comment, userId: this.props.data.user.id });
+    this.setState({comment, loading: true}, () => {
+      this.props.createPost({ comment, userId: this.props.data.user.id })
+      .then(() => {
+        this.setState({loading: false})
+      })
+    })
   }
 
   render() {
@@ -55,23 +76,23 @@ export default class CreatePost extends React.Component {
     return (
       <div className="w-100">
         <Paper zDepth={1} className="pa3 w-100 flex flex-row justify-between">
+          <div style={{position: 'relative', margin: 'auto 10px auto 0'}}>
+            <RefreshIcon status={this.state.loading} />
+          </div>
           <TextField
-            //fullWidth
+            fullWidth
             onKeyDown={ this.submitComment }
             id="comment"
             placeholder="comment"
             value={comment}
             onChange={e => this.setState({ comment: e.target.value })}
           />
-      
-        
           <RaisedButton
-            style={{boxShadow: 'none'}}
+            style={{boxShadow: 'none', marginLeft: '10px'}}
             label="Submit"
             primary={true}
             onTouchTap={this.handlePost}
           />
-          
         </Paper>
       </div>
     );

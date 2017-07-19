@@ -20,26 +20,14 @@ class ListPage extends React.Component {
   }
   
   componentWillReceiveProps(newProps) {
-  
-    if (!newProps.data.loading) {
-      if (this.subscription) {
-        if (newProps.data.allPosts !== this.props.data.allPosts) {
-          this.setState({allPosts: newProps.allPosts})
-          // if the feed has changed, we need to unsubscribe before resubscribing
-          this.subscription()
-        } else {
-          // we already have an active subscription with the right params
-          return
-        }
-      }
-      this.subscription = newProps.subscribeToPosts
+    console.log("ListPage.js",newProps)
+    if (!newProps.data.loading && !this.subscription) {
+      this.subscription = this.props.data.subscribeToMore(newProps.subscribeToPosts)        
     }
   }
 
   deletePost(id) {
-    
     this.props.deletePost(id).then((resp) => {
-      
     });
   }
 
@@ -51,16 +39,18 @@ class ListPage extends React.Component {
   
     return (
       <div>
+        <p>Socket connection: {this.props.subscribeToPosts ? 'true' : 'false'}</p>
         <Paper zDepth={1} className="pa3 mv3">
           {allPosts && allPosts.length > 0 ? allPosts.map(post =>
             (<Post
+              user={this.props.data.user}
               key={post.id}
               post={post}
               handleClick={this.deletePost}
             />),
           ) : ''}
         </Paper>
-        <CreatePost />
+        <CreatePost {...this.props} />
       </div>
     );
   }

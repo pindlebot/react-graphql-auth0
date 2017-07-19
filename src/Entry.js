@@ -9,6 +9,7 @@ import Profile from './containers/Profile';
 import theme from './theme';
 import { APP_PATH, PROFILE_PATH } from './constants';
 import { saveAccessToken, updateProfile } from './reducer';
+import './style.css'
 
 class Entry extends React.Component {
   static childContextTypes = {

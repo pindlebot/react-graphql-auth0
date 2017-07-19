@@ -15,7 +15,9 @@ const meta = {
   fontSize: '12px'
 }
 
-const Post = ({ post, handleClick }) => (
+export const Post = ({ post, handleClick, user }) => {
+  console.log(post)
+  return (
     <div className="flex flex-row justify-between mv1">
       <div className="flex flex-row items-center">
         <Avatar size={25} src={createAvatarUrl(post.user.name)} className="mh3" />
@@ -26,10 +28,11 @@ const Post = ({ post, handleClick }) => (
         <FlatButton
           icon={<DeleteBtn />}
           onTouchTap={() => { handleClick({ id: post.id }); }}
-        />
+        /> 
       </div>
     </div>
 );
+}
 
 Post.propTypes = {
   post: propTypes.object.isRequired,

@@ -1,5 +1,6 @@
-import { graphql, gql, compose } from 'react-apollo';
+import { graphql, gql, compose, withApollo } from 'react-apollo';
 import ListPage from './ListPage';
+//import update from 'immutability-helper';
 
 const deletePost = gql`
   mutation deletePost($id: ID!) {
@@ -17,10 +18,19 @@ const postQuery = gql`
       createdAt
       user {
         name
+        id
       }
     }
   }
 `;
+
+const userQuery = gql`
+  query userQuery {
+    user {
+      id
+    }
+  }
+`
 
 const POSTS_SUBSCRIPTION = gql`
   subscription {
@@ -32,6 +42,7 @@ const POSTS_SUBSCRIPTION = gql`
         createdAt
         user {
           name
+          id
         }
       }
       previousValues {
@@ -42,31 +53,21 @@ const POSTS_SUBSCRIPTION = gql`
 `
 
 const subscribeToPosts = (props) => {
-  return props.data.subscribeToMore({
+  return {
     document: POSTS_SUBSCRIPTION,
     variables: null,
     updateQuery: (prev, {subscriptionData}) => { 
-      var post = subscriptionData.data.Post
-      switch(true) {
-        case !subscriptionData.data: 
-          return prev
-          
-        case !post.node: 
-          var {id} = post.previousValues
-          var filtered = prev.allPosts.filter(x => x.id !== id)
-          return { allPosts: [...filtered] }
-          
-        case !prev.allPosts.find(post => post.id === subscriptionData.data.Post.node.id):
-          return { allPosts: [...prev.allPosts, { ...post.node }] }
-          
-        default: 
-          return prev
-      }
+    var post = subscriptionData.data.Post
+    if(!post.node) {
+      var {id} = post.previousValues
+      return { allPosts: [...prev.allPosts.filter(x => x.id !== id)] }
+    }  
+    return { allPosts: [...prev.allPosts, { ...post.node }] }
     },
-  })
+  }
 }
 
-export default compose(
+export default withApollo(compose(
   graphql(deletePost, {
     props: ({ ownProps, mutate }) => ({
       deletePost: ({ id }) => mutate({ variables: { id } }),
@@ -79,5 +80,5 @@ export default compose(
   }),
   graphql(postQuery, {
     options: { fetchPolicy: 'network-only' },
-  }),
-)(ListPage);
+  })
+)(ListPage))

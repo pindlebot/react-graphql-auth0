@@ -3,7 +3,9 @@ import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-trans
 import config from './config';
 
 // __SUBSCRIPTIONS_API_ENDPOINT_ looks similar to: `wss://subscriptions.graph.cool/v1/<PROJECT_ID>`
-const wsClient = new SubscriptionClient(config.GRAPH_COOL_SUBSCRIPTION_ENDPOINT);
+const wsClient = new SubscriptionClient(config.GRAPH_COOL_SUBSCRIPTION_ENDPOINT, {
+  reconnect: true,
+});
 
 // __SIMPLE_API_ENDPOINT_ looks similar to: `https://api.graph.cool/simple/v1/<PROJECT_ID>`
 const networkInterface = createNetworkInterface({

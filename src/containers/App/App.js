@@ -1,8 +1,6 @@
 import React from 'react';
 import propTypes from 'prop-types';
 import ListPage from '../../components/ListPage';
-import './style.css';
-//import subscription from './subscription';
 import Layout from '../Layout';
 
 export default class App extends React.Component {
