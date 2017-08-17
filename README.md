@@ -1,5 +1,7 @@
 # Auth0 Example (with React & Apollo)
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/focuswish/react-graphql-auth0.svg)](https://greenkeeper.io/)
+
 - lorum
 
 * [Auth0](https://auth0.com/): Powerful authentication provider
