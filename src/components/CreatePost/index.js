@@ -1,5 +1,6 @@
-import { graphql, gql, compose } from 'react-apollo';
-import CreatePost from './CreatePost';
+import { graphql, compose } from 'react-apollo'
+import CreatePost from './CreatePost'
+import gql from 'graphql-tag'
 
 const createPost = gql`
   mutation createPost($comment: String!, $userId: ID!) {
@@ -10,7 +11,7 @@ const createPost = gql`
       id
     }
   }
-`;
+`
 
 const userQuery = gql`
   query userQuery {
@@ -18,15 +19,15 @@ const userQuery = gql`
       id
     }
   }
-`;
+`
 
 export default compose(
   graphql(createPost, {
     props: ({ mutate }) => ({
-      createPost: ({ comment, userId }) => mutate({ variables: { comment, userId } }),
-    }),
+      createPost: ({ comment, userId }) => mutate({ variables: { comment, userId } })
+    })
   }),
   graphql(userQuery, {
-    options: { fetchPolicy: 'network-only' },
-  }),
-)(CreatePost);
+    options: { fetchPolicy: 'network-only' }
+  })
+)(CreatePost)

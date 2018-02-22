@@ -1,6 +1,6 @@
-import { graphql, gql, compose, withApollo } from 'react-apollo';
-import ListPage from './ListPage';
-//import update from 'immutability-helper';
+import { graphql, compose, withApollo } from 'react-apollo'
+import ListPage from './ListPage'
+import gql from 'graphql-tag'
 
 const deletePost = gql`
   mutation deletePost($id: ID!) {
@@ -8,7 +8,7 @@ const deletePost = gql`
       id
     }
   }
-`;
+`
 
 const postQuery = gql`
   query postQuery {
@@ -20,14 +20,6 @@ const postQuery = gql`
         name
         id
       }
-    }
-  }
-`;
-
-const userQuery = gql`
-  query userQuery {
-    user {
-      id
     }
   }
 `
@@ -56,29 +48,29 @@ const subscribeToPosts = (props) => {
   return {
     document: POSTS_SUBSCRIPTION,
     variables: null,
-    updateQuery: (prev, {subscriptionData}) => { 
-    var post = subscriptionData.data.Post
-    if(!post.node) {
-      var {id} = post.previousValues
-      return { allPosts: [...prev.allPosts.filter(x => x.id !== id)] }
-    }  
-    return { allPosts: [...prev.allPosts, { ...post.node }] }
-    },
+    updateQuery: (prev, {subscriptionData}) => {
+      var post = subscriptionData.data.Post
+      if (!post.node) {
+        var {id} = post.previousValues
+        return { allPosts: [...prev.allPosts.filter(x => x.id !== id)] }
+      }
+      return { allPosts: [...prev.allPosts, { ...post.node }] }
+    }
   }
 }
 
 export default withApollo(compose(
   graphql(deletePost, {
     props: ({ ownProps, mutate }) => ({
-      deletePost: ({ id }) => mutate({ variables: { id } }),
-    }),
+      deletePost: ({ id }) => mutate({ variables: { id } })
+    })
   }),
   graphql(postQuery, {
     props: props => ({
       subscribeToPosts: subscribeToPosts(props)
-    }),
+    })
   }),
   graphql(postQuery, {
-    options: { fetchPolicy: 'network-only' },
+    options: { fetchPolicy: 'network-only' }
   })
 )(ListPage))

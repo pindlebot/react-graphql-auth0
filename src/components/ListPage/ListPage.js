@@ -1,60 +1,48 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Post from '../Post';
-import CreatePost from '../CreatePost';
+import React from 'react'
+import PropTypes from 'prop-types'
+import Post from '../Post'
+import CreatePost from '../CreatePost'
 import Paper from 'material-ui/Paper'
 
 class ListPage extends React.Component {
-
   static propTypes = {
     data: PropTypes.object.isRequired,
     deletePost: PropTypes.func.isRequired,
     client: PropTypes.object.isRequired
   }
 
-  constructor(props) {
-    super(props);
-
-    this.deletePost = this.deletePost.bind(this);
-   
-  }
-  
-  componentWillReceiveProps(newProps) {
-    console.log("ListPage.js",newProps)
+  componentWillReceiveProps (newProps) {
     if (!newProps.data.loading && !this.subscription) {
-      this.subscription = this.props.data.subscribeToMore(newProps.subscribeToPosts)        
+      this.subscription = this.props.data.subscribeToMore(newProps.subscribeToPosts)
     }
   }
 
-  deletePost(id) {
+  deletePost = (id) => {
     this.props.deletePost(id).then((resp) => {
-    });
+    })
   }
 
-  render() {
+  render () {
     var {data: {loading, allPosts}} = this.props
     if (loading) {
-      return (<div>Loading</div>);
+      return (<div>Loading</div>)
     }
-  
+
     return (
       <div>
-        <p>Socket connection: {this.props.subscribeToPosts ? 'true' : 'false'}</p>
-        <Paper zDepth={1} className="pa3 mv3">
-          {allPosts && allPosts.length > 0 ? allPosts.map(post =>
-            (<Post
-              user={this.props.data.user}
-              key={post.id}
-              post={post}
-              handleClick={this.deletePost}
-            />),
+        <Paper zDepth={1} className='pa3 mv3'>
+          {allPosts && allPosts.length > 0 ? allPosts.map(post => (<Post
+            user={this.props.data.user}
+            key={post.id}
+            post={post}
+            handleClick={this.deletePost}
+          />)
           ) : ''}
         </Paper>
         <CreatePost {...this.props} />
       </div>
-    );
+    )
   }
 }
 
-
-export default ListPage;
+export default ListPage

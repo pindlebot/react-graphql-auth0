@@ -1,53 +1,8 @@
-import React from 'react';
+import React from 'react'
 import propTypes from 'prop-types'
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
-import Paper from 'material-ui/Paper';
-import Layout from '../Layout';
+import Layout from '../Layout'
 import Spinner from '../../components/Spinner'
-
-const UserForm = props => (
-  <div className="ma1">
-    <Paper zDepth={1} className="ma4 pa4">
-      <TextField
-        fullWidth
-        id="name"
-        placeholder="Name"
-        value={props.name}
-        onChange={(e) => {
-          props.handleChange(e, 'name');
-        }}
-      />
-      <TextField
-        fullWidth
-        id="emailAddress"
-        placeholder="Email"
-        value={props.emailAddress}
-        onChange={(e) => {
-          props.handleChange(e, 'emailAddress');
-        }}
-      />
-    </Paper>
-    <FlatButton
-      label="Update"
-      onTouchTap={() => {
-        props.updateUser({
-          name: props.name,
-          id: props.id,
-          emailAddress: props.emailAddress,
-        });
-      }}
-    />
-  </div>
-);
-
-UserForm.PropTypes = {
-  name: propTypes.string.isRequired,
-  id: propTypes.string.isRequired,
-  emailAddress: propTypes.string.isRequired,
-  updateUser: propTypes.func.isRequired,
-  handleChange: propTypes.func.isRequired
-}
+import UserForm from './UserForm'
 
 class Profile extends React.Component {
   static propTypes = {
@@ -55,55 +10,41 @@ class Profile extends React.Component {
     updateUser: propTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      formData: {
-        name: '',
-        emailAddress: '',
-      },
-    };
+  state = {}
 
-    this.handleChange = this.handleChange.bind(this)
+  handleChange = (e, id) => {
+    this.setState({ [id]: e.target.value })
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.data.user && nextProps.data.user !== this.props.data.user) {
-      const formData = {
-        name: nextProps.data.user.name,
-        emailAddress: nextProps.data.user.emailAddress,
-      };
-      this.setState({
-        formData,
-      });
-    }
-  }
-
-  handleChange (e, id) {
-    const formData = this.state.formData;
-    formData[id] = e.target.value;
-    this.setState({formData})            
-  }
-
-  render() {
+  render () {
     if (this.props.data.loading) {
-      return <Spinner />;
+      return <Spinner />
     }
+
+    let { user } = this.props.data
+    let { id } = user
+    let emailAddress = typeof this.state.emailAddress === 'undefined'
+      ? user.emailAddress
+      : this.state.emailAddress
+
+    let name = typeof this.state.name === 'undefined'
+      ? user.name
+      : this.state.name
+
     return (
       <Layout {...this.props}>
-        <div className="w-100 flex flex-row justify-center">
-          {this.props.data
-            ? <UserForm
-              name={this.state.formData.name}
-              emailAddress={this.state.formData.emailAddress}
-              id={this.props.data.user.id}
+        <div className='w-100 flex flex-row justify-center'>
+          {this.props.data &&
+            <UserForm
               handleChange={this.handleChange}
               updateUser={this.props.updateUser}
-            />
-            : ''}
+              id={id}
+              name={name}
+              emailAddress={emailAddress}
+            />}
         </div>
       </Layout>
-    );
+    )
   }
 }
-export default Profile;
+export default Profile

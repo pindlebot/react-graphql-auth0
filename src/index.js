@@ -1,19 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { ApolloProvider } from 'react-apollo';
+import React from 'react'
+import { render } from 'react-dom'
+import { ApolloProvider } from 'react-apollo'
 import 'tachyons/css/tachyons.css'
-import injectTapEventPlugin from 'react-tap-event-plugin';
-import store from './store';
-import createClient from './client';
-import Entry from './Entry';
+import createClient from './lib/client'
+import Router from './Router'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import reducer from './lib/reducer'
 
-injectTapEventPlugin();
-const client = createClient();
+const client = createClient()
+const store = createStore(reducer.appReducer)
 
-ReactDOM.render((
-  <ApolloProvider store={store} client={client}>
-    <Entry />
-  </ApolloProvider>
-  ),
-  document.getElementById('root'),
-);
+render(
+  <ApolloProvider client={client}>
+    <Provider store={store}>
+      <Router />
+    </Provider>
+  </ApolloProvider>,
+  document.getElementById('root')
+)

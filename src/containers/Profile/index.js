@@ -1,6 +1,7 @@
-import { graphql, gql, compose } from 'react-apollo';
-import { withRouter } from 'react-router-dom';
-import Profile from './Profile';
+import { graphql, compose } from 'react-apollo'
+import { withRouter } from 'react-router-dom'
+import Profile from './Profile'
+import gql from 'graphql-tag'
 
 const updateUser = gql`
   mutation updateUser($name: String!, $id: ID!, $emailAddress: String!) {
@@ -10,7 +11,7 @@ const updateUser = gql`
       emailAddress
     }
   }
-`;
+`
 
 const userQuery = gql`
   query userQuery {
@@ -20,15 +21,15 @@ const userQuery = gql`
       emailAddress
     }
   }
-`;
+`
 
 export default compose(
   graphql(updateUser, {
     props: ({ mutate }) => ({
-      updateUser: ({ name, id, emailAddress }) => mutate({ variables: { name, id, emailAddress } }),
-    }),
+      updateUser: ({ name, id, emailAddress }) => mutate({ variables: { name, id, emailAddress } })
+    })
   }),
   graphql(userQuery, {
-    options: { fetchPolicy: 'network-only' },
-  }),
-)(withRouter(Profile));
+    // options: { fetchPolicy: 'network-only' }
+  })
+)(withRouter(Profile))
